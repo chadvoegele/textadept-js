@@ -1,5 +1,11 @@
 local tajs = {}
 
+if type(snippets) == 'table' then
+  snippets.javascript = {
+    logjs = 'console.log(JSON.stringify(%1(obj)));'
+  }
+end
+
 tajs.options = {
   checkers = {{
     command = 'jshint',

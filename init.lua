@@ -19,7 +19,7 @@ tajs.options = {
 }
 
 -- Following https://github.com/rgieseke/textadept-python/blob/master/init.lua
--- Annotates and navigates to first error found.
+-- Annotates all errors.
 tajs.check = function ()
   if buffer:get_lexer() ~= 'javascript' then
     return
@@ -29,21 +29,20 @@ tajs.check = function ()
   for _, s in pairs(tajs.options.checkers) do
     local command = s.command..' '..buffer.filename..' 2>&1'
     local p = io.popen(command)
-    local out = p:read('*line')
+    local out
+    while true do
+      out = p:read('*line')
+      if not out then break end
+      local line, err_msg = s.parser(out)
+      if not line then break end
+      buffer.annotation_visible = 2
+      buffer.annotation_text[line - 1] = err_msg
+      buffer.annotation_style[line - 1] = 8
+    end
     local _, _, rc = p:close()
     if rc == 127 then
       ui.print(out)
       return
-    end
-    if out then
-      local line, err_msg = s.parser(out)
-      if line then
-        buffer.annotation_visible = 2
-        buffer.annotation_text[line - 1] = err_msg
-        buffer.annotation_style[line - 1] = 8
-        buffer:goto_line(line - 1)
-        return
-      end
     end
   end
 end

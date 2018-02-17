@@ -66,9 +66,4 @@ tajs.check = function ()
   end
 end
 
-tajs.init = function ()
-  events.connect(events.FILE_AFTER_SAVE, tajs.check)
-  return tajs
-end
-
 return tajs

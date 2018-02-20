@@ -45,7 +45,7 @@ tajs.check = function ()
   for _, s in pairs(tajs.options.checkers) do
     local config = tajs.find_config(buffer.filename, s.config)
     if config ~= nil then
-      local command = s.command..' '..buffer.filename..' 2>&1'
+      local command = s.command..' --config '..config..' '..buffer.filename..' 2>&1'
       local p = io.popen(command)
       local out
       while true do
